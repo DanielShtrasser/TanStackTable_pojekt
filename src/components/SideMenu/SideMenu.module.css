@@ -1,0 +1,23 @@
+.sideMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 270px;
+  font-size: var(--small-font-size);
+}
+
+.navWrapper {
+  flex-grow: 1;
+  padding-right: 10px;
+  border-right: 1px solid var(--font-color);
+}
+
+.desc {
+  font-size: var(--small-font-size);
+  color: var(--font-color);
+}
+
+.line {
+  margin: 10px 0 10px 0;
+  border-bottom: 1px solid #072659;
+}
