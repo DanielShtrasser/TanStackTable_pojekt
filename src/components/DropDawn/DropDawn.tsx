@@ -1,6 +1,5 @@
 import { useState } from "react";
 import clsx from "clsx/lite";
-// import type { Filial } from "../../types";
 
 import style from "./DropDawn.module.css";
 

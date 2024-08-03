@@ -1,8 +1,9 @@
-import { useState, FC } from "react";
+import { useState, FC, useEffect } from "react";
 import HeaderInfo from "../HeaderInfo/HeaderInfo";
 import Navigator from "../Navigator";
 import DropDawn from "../DropDawn";
 import { useAppDispatch } from "../../redux/hooks/redux";
+import { useAppSelector } from "../../redux/hooks/redux";
 import { menuApi } from "../../redux/services/menuApi";
 import { setCurrentFilial } from "../../redux/store/appSlice";
 
@@ -10,7 +11,8 @@ import style from "./SideMenu.module.css";
 import { Filial } from "../../types";
 
 const SideMenu: FC = function () {
-  const [selectFilial, setSelectFilial] = useState<Filial>();
+  const { currentFilial } = useAppSelector((state) => state.appReducer);
+  const [selectFilial, setSelectFilial] = useState<Filial>(currentFilial);
   const { data: filials = [] } = menuApi.useGetFilialsQuery();
   const dispatch = useAppDispatch();
 
@@ -20,6 +22,10 @@ const SideMenu: FC = function () {
       dispatch(setCurrentFilial(filial));
     }
   };
+
+  useEffect(() => {
+    setSelectFilial(currentFilial);
+  }, [currentFilial]);
 
   return (
     <aside className={style.sideMenu}>

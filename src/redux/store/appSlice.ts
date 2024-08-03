@@ -1,28 +1,28 @@
-import {createSlice} from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
 interface IAppState {
-    currentFilial: {id: number, name: string},
-    currentNavigatorSection: string,
+  currentFilial: { id: number; name: string };
+  currentNavigatorSection: string;
 }
 
 const initialState: IAppState = {
-    currentFilial: {id: 0, name: ''},
-    currentNavigatorSection: '4',
-}
+  currentFilial: { id: 0, name: "" },
+  currentNavigatorSection: "",
+};
 
 export const appSlice = createSlice({
-    name: 'app',
-    initialState,
-    reducers: {
-        setCurrentNavigatorSection(state, action) {
-            state.currentNavigatorSection = action.payload;
-        },
-        setCurrentFilial(state, action) {
-            state.currentFilial = action.payload;
-        },
-    }
+  name: "app",
+  initialState,
+  reducers: {
+    setCurrentNavigatorSection(state, action) {
+      state.currentNavigatorSection = action.payload;
+    },
+    setCurrentFilial(state, action) {
+      state.currentFilial = action.payload;
+    },
+  },
+});
 
-})
-
-export const {setCurrentFilial, setCurrentNavigatorSection} = appSlice.actions
+export const { setCurrentFilial, setCurrentNavigatorSection } =
+  appSlice.actions;
 export default appSlice.reducer;

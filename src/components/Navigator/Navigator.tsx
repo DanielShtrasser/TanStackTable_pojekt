@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect, FC } from "react";
 import style from "./Navigator.module.css";
 import { SideMenuBtn } from "../../types";
 import clsx from "clsx";
@@ -18,11 +18,11 @@ export const buttons: SideMenuBtn[] = [
   { id: "9", name: "Накладные" },
 ];
 
-const Navigator: React.FC = () => {
+const Navigator: FC = () => {
   const { currentNavigatorSection } = useAppSelector(
     (state) => state.appReducer
   );
-  const [activeBtn, setActiveBtn] = React.useState(currentNavigatorSection);
+  const [activeBtn, setActiveBtn] = useState(currentNavigatorSection);
   const dispatch = useAppDispatch();
 
   const onСhoiceHandler = (section: string): void => {
@@ -31,6 +31,12 @@ const Navigator: React.FC = () => {
       dispatch(setCurrentNavigatorSection(section));
     }
   };
+
+  useEffect(() => {
+    if (!activeBtn) {
+      setActiveBtn(currentNavigatorSection);
+    }
+  }, [currentNavigatorSection]);
 
   return (
     <div className={style.navigator}>
