@@ -8,13 +8,13 @@ const HeaderInfo: React.FC = () => {
         <div className={style.logo} />
         <div>
           <div>НАЗВАНИЕ ФИРМЫ</div>
-          <div>Лоскутникова В.П.</div>
+          <div className={style.name}>Лоскутникова В.П.</div>
         </div>
       </div>
       <div className={style.line}></div>
       <div className={style.inventoryControl}>
         <div className={style.logo} />
-        <p>СКЛАДСКОЙ УЧЕТ</p>
+        <div>СКЛАДСКОЙ УЧЕТ</div>
       </div>
     </div>
   );
