@@ -361,8 +361,24 @@ function Pagination({ table }: PaginationProps) {
   );
 }
 
+// function usePagination() {
+//   const [pagination, setPagination] = useState({
+//     pageSize: 10,
+//     pageIndex: 1,
+//   });
+//   const { pageSize, pageIndex } = pagination;
+
+//   return {
+//     limit: pageSize,
+//     onPaginationChange: setPagination,
+//     pagination,
+//   };
+// }
+
 export default function MenuTable() {
   const { currentFilial } = useAppSelector((state) => state.appReducer);
+  // const { limit, onPaginationChange, pagination } = usePagination();
+
   const {
     data: menuInfo,
     error,
@@ -383,7 +399,8 @@ export default function MenuTable() {
           filterVariant: "text",
           placeholder: "Название меню",
         },
-        size: 146,
+        maxSize: 200,
+        // size: 146,
       },
       {
         accessorKey: "filial.name",
@@ -432,7 +449,9 @@ export default function MenuTable() {
 
     // для серверной пагинации
     // manualPagination: true,
-    // rowCount: menuInfo?.max_pages,
+    // pageCount: menuInfo?.max_pages,
+    // onPaginationChange,
+    // state: { pagination },
   });
 
   if (error) {
@@ -481,7 +500,7 @@ export default function MenuTable() {
             </tr>
           ))}
         </thead>
-        <tbody>
+        <tbody style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {table.getRowModel().rows.map((row) => {
             return (
               <tr key={row.id}>
@@ -498,7 +517,7 @@ export default function MenuTable() {
                     </td>
                   );
                 })}
-                <td style={{ display: "flex", gap: "5px" }}>
+                <td className={style.tableRowBtns}>
                   <button className={clsx(style.icon, style.infoIcon)}></button>
                   <button className={clsx(style.icon, style.editIcon)}></button>
                   <button className={clsx(style.icon, style.delIcon)}></button>

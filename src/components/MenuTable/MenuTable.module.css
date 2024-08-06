@@ -45,7 +45,8 @@ th > input {
 }
 
 td {
-  overflow-x: auto;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .pagination {
@@ -122,4 +123,9 @@ td {
   padding: 10px;
   font-size: 20px;
   font-weight: 700;
+}
+
+.tableRowBtns {
+  display: flex;
+  gap: 5px;
 }
