@@ -6,10 +6,12 @@ interface getAllMenuRequestInfo {
   filialId: number;
   //для фиольтрации на стороне сервера
   params?: {
-    name: string;
-    filial: string;
-    tt: string;
-    active: string;
+    limit?: string;
+    page?: string;
+    name?: string;
+    filial?: string;
+    tt?: string;
+    active?: string;
   };
 }
 

@@ -44,9 +44,9 @@ th > input {
   border: 1px solid var(--font-color);
 }
 
-/* td { */
-/* height: 30px; */
-/* } */
+td {
+  overflow-x: auto;
+}
 
 .pagination {
   display: flex;

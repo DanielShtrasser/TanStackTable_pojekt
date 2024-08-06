@@ -370,6 +370,7 @@ export default function MenuTable() {
   } = menuApi.useGetAllMenuQuery(
     {
       filialId: currentFilial.id,
+      params: { limit: "15" },
     },
     { skip: !currentFilial.id }
   );
@@ -431,7 +432,7 @@ export default function MenuTable() {
 
     // для серверной пагинации
     // manualPagination: true,
-    // rowCount: menuInfo?.data.length,
+    // rowCount: menuInfo?.max_pages,
   });
 
   if (error) {
