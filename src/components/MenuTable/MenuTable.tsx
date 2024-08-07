@@ -434,8 +434,7 @@ export default function MenuTable() {
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
-    pageCount: max_pages ? max_pages + 1 : max_pages,
-    // pageCount: menuInfo?.max_pages,
+    pageCount: max_pages ? max_pages + 1 : 0,
     onPaginationChange: setPagination,
     state: { pagination },
   });
@@ -517,7 +516,7 @@ export default function MenuTable() {
           })}
         </tbody>
       </table>
-      {table.getPageCount() > 1 && <Pagination table={table} />}
+      {table.getPageCount() > 2 && <Pagination table={table} />}
     </div>
   );
 }
