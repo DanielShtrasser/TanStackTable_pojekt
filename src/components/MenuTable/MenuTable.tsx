@@ -113,23 +113,37 @@ interface PaginationProps {
 
 function Pagination({ table }: PaginationProps) {
   const [activePageBtn, setActivePageBtn] = useState(1);
+  console.log("activePageBtn ", activePageBtn);
+
   const currentPage = table.getState().pagination.pageIndex;
-  const btns: number[] = new Array(table.getPageCount())
-    .fill(0)
-    .map((_, i) => i + 1);
+  console.log("currentPage ", currentPage);
+
   const pageCount = table.getPageCount();
+  const btns: number[] = new Array(pageCount - 1).fill(0).map((_, i) => i + 1);
 
   useEffect(() => {
     if (pageCount > 5) {
-      if (currentPage === 0) {
+      if (currentPage === 1) {
         setActivePageBtn(1);
-      } else if (currentPage === 1) {
+      } else if (currentPage === 2) {
         setActivePageBtn(2);
-      } else if (currentPage == 2 || currentPage < table.getPageCount() - 2) {
+      } else if (currentPage === 3 || currentPage < table.getPageCount() - 2) {
         setActivePageBtn(3);
-      } else if (currentPage == table.getPageCount() - 2) {
+      } else if (currentPage === table.getPageCount() - 2) {
         setActivePageBtn(4);
-      } else if (currentPage == table.getPageCount() - 1) {
+      } else if (currentPage === table.getPageCount() - 1) {
+        setActivePageBtn(5);
+      }
+    } else {
+      if (currentPage === 1) {
+        setActivePageBtn(1);
+      } else if (currentPage === 2) {
+        setActivePageBtn(2);
+      } else if (currentPage === 3) {
+        setActivePageBtn(3);
+      } else if (currentPage === 4) {
+        setActivePageBtn(4);
+      } else if (currentPage === 5) {
         setActivePageBtn(5);
       }
     }
@@ -142,7 +156,7 @@ function Pagination({ table }: PaginationProps) {
           <button
             className={style.paginationBackBtn}
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            disabled={currentPage === 1}
           ></button>
 
           {btns.map((p: number) => {
@@ -156,7 +170,7 @@ function Pagination({ table }: PaginationProps) {
                       activePageBtn == 1 && style.active
                     )}
                     onClick={() => {
-                      table.firstPage();
+                      table.setPageIndex(1);
                     }}
                   >
                     1
@@ -171,11 +185,11 @@ function Pagination({ table }: PaginationProps) {
                       activePageBtn == 2 && style.active
                     )}
                     onClick={() => {
-                      table.setPageIndex(1);
+                      table.setPageIndex(2);
                     }}
                     disabled={currentPage > 3}
                   >
-                    {currentPage > 2 ? "..." : 2}
+                    {currentPage > 3 ? "..." : 2}
                   </button>
                 );
               case 3:
@@ -184,25 +198,22 @@ function Pagination({ table }: PaginationProps) {
                     key={p}
                     className={clsx(
                       style.pageBtn,
-                      activePageBtn == 3 && style.active
+                      activePageBtn === 3 && style.active
                     )}
                     onClick={() => {
-                      if (currentPage <= 2) {
-                        table.setPageIndex(2);
+                      if (currentPage <= 3) {
+                        table.setPageIndex(3);
                       }
-                      if (
-                        table.getPageCount() > 5 &&
-                        currentPage >= table.getPageCount() - 2
-                      ) {
-                        table.setPageIndex(table.getPageCount() - 3);
+                      if (currentPage >= pageCount - 2) {
+                        table.setPageIndex(pageCount - 4);
                       }
                     }}
                   >
-                    {currentPage <= 2
+                    {currentPage <= 3
                       ? 3
-                      : currentPage >= table.getPageCount() - 2
-                      ? table.getPageCount() - 2
-                      : currentPage + 1}
+                      : currentPage >= pageCount - 3 // 5/7
+                      ? pageCount - 3 // 5/7
+                      : currentPage}
                   </button>
                 );
               case 4:
@@ -213,17 +224,12 @@ function Pagination({ table }: PaginationProps) {
                       style.pageBtn,
                       activePageBtn == 4 && style.active
                     )}
-                    disabled={
-                      currentPage < table.getPageCount() - 3 &&
-                      table.getPageCount() > 5
-                    }
+                    disabled={currentPage < pageCount - 3 && pageCount > 5}
                     onClick={() => {
-                      table.setPageIndex(table.getPageCount() - 2);
+                      table.setPageIndex(pageCount - 2);
                     }}
                   >
-                    {currentPage < table.getPageCount() - 3
-                      ? "..."
-                      : table.getPageCount() - 1}
+                    {currentPage < pageCount - 2 ? "..." : pageCount - 2}
                   </button>
                 );
               case 5:
@@ -238,29 +244,34 @@ function Pagination({ table }: PaginationProps) {
                       table.lastPage();
                     }}
                   >
-                    {table.getPageCount()}
+                    {pageCount - 1}
                   </button>
                 );
               default:
                 break;
             }
           })}
+
           <button
             className={style.paginationForwardBtn}
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => {
+              if (currentPage === pageCount - 1) {
+                table.setPageIndex(pageCount - 1);
+                return;
+              }
+              table.nextPage();
+            }}
+            disabled={currentPage === pageCount - 1}
           ></button>
         </>
       ) : (
         <>
           <button
             className={style.paginationBackBtn}
-            onClick={() => {
-              setActivePageBtn((p) => p - 1);
-              table.previousPage();
-            }}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => table.previousPage()}
+            disabled={currentPage === 1}
           ></button>
+
           {btns.map((p: number) => {
             switch (p) {
               case 1:
@@ -271,10 +282,8 @@ function Pagination({ table }: PaginationProps) {
                       style.pageBtn,
                       activePageBtn == 1 && style.active
                     )}
-                    onClick={() => {
-                      table.firstPage();
-                      setActivePageBtn(1);
-                    }}
+                    onClick={() => table.setPageIndex(1)}
+                    disabled={currentPage === 1}
                   >
                     1
                   </button>
@@ -285,12 +294,10 @@ function Pagination({ table }: PaginationProps) {
                     key={p}
                     className={clsx(
                       style.pageBtn,
-                      activePageBtn == 2 && style.active
+                      activePageBtn === 2 && style.active
                     )}
-                    onClick={() => {
-                      table.setPageIndex(1);
-                      setActivePageBtn(2);
-                    }}
+                    onClick={() => table.setPageIndex(2)}
+                    disabled={currentPage === 2}
                   >
                     2
                   </button>
@@ -303,10 +310,7 @@ function Pagination({ table }: PaginationProps) {
                       style.pageBtn,
                       activePageBtn == 3 && style.active
                     )}
-                    onClick={() => {
-                      table.setPageIndex(2);
-                      setActivePageBtn(3);
-                    }}
+                    onClick={() => table.setPageIndex(3)}
                   >
                     3
                   </button>
@@ -319,10 +323,7 @@ function Pagination({ table }: PaginationProps) {
                       style.pageBtn,
                       activePageBtn == 4 && style.active
                     )}
-                    onClick={() => {
-                      table.setPageIndex(3);
-                      setActivePageBtn(4);
-                    }}
+                    onClick={() => table.setPageIndex(4)}
                   >
                     4
                   </button>
@@ -335,25 +336,20 @@ function Pagination({ table }: PaginationProps) {
                       style.pageBtn,
                       activePageBtn == 5 && style.active
                     )}
-                    onClick={() => {
-                      table.lastPage();
-                      setActivePageBtn(5);
-                    }}
+                    onClick={() => table.setPageIndex(pageCount - 1)}
                   >
-                    {table.getPageCount()}
+                    {pageCount}
                   </button>
                 );
               default:
                 break;
             }
           })}
+
           <button
             className={style.paginationForwardBtn}
-            onClick={() => {
-              setActivePageBtn((p) => p + 1);
-              table.nextPage();
-            }}
-            disabled={!table.getCanNextPage()}
+            onClick={() => table.nextPage()}
+            disabled={currentPage === pageCount - 1}
           ></button>
         </>
       )}
@@ -361,23 +357,12 @@ function Pagination({ table }: PaginationProps) {
   );
 }
 
-// function usePagination() {
-//   const [pagination, setPagination] = useState({
-//     pageSize: 10,
-//     pageIndex: 1,
-//   });
-//   const { pageSize, pageIndex } = pagination;
-
-//   return {
-//     limit: pageSize,
-//     onPaginationChange: setPagination,
-//     pagination,
-//   };
-// }
-
 export default function MenuTable() {
   const { currentFilial } = useAppSelector((state) => state.appReducer);
-  // const { limit, onPaginationChange, pagination } = usePagination();
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    pageIndex: 1,
+  });
 
   const {
     data: menuInfo,
@@ -386,11 +371,15 @@ export default function MenuTable() {
   } = menuApi.useGetAllMenuQuery(
     {
       filialId: currentFilial.id,
-      params: { limit: "15" },
+      params: {
+        limit: String(pagination.pageSize),
+        page: String(pagination.pageIndex),
+      },
     },
     { skip: !currentFilial.id }
   );
 
+  const max_pages = menuInfo?.max_pages;
   const columns = useMemo<ColumnDef<Menu, any>[]>(
     () => [
       {
@@ -399,8 +388,6 @@ export default function MenuTable() {
           filterVariant: "text",
           placeholder: "Название меню",
         },
-        maxSize: 200,
-        // size: 146,
       },
       {
         accessorKey: "filial.name",
@@ -446,13 +433,16 @@ export default function MenuTable() {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-
-    // для серверной пагинации
-    // manualPagination: true,
+    manualPagination: true,
+    pageCount: max_pages ? max_pages + 1 : max_pages,
     // pageCount: menuInfo?.max_pages,
-    // onPaginationChange,
-    // state: { pagination },
+    onPaginationChange: setPagination,
+    state: { pagination },
   });
+
+  useEffect(() => {
+    console.log("pageIndex ", pagination.pageIndex);
+  }, [pagination]);
 
   if (error) {
     if ("status" in error) {
