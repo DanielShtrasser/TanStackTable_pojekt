@@ -4,7 +4,6 @@ import { addSearchParams } from "../../helpers";
 
 interface getAllMenuRequestInfo {
   filialId: number;
-  //для фиольтрации на стороне сервера
   params?: {
     limit?: string;
     page?: string;

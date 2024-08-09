@@ -7,10 +7,10 @@ import {
   ColumnDef,
   RowData,
   flexRender,
+  useReactTable,
+  ColumnFiltersState,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useAppSelector } from "../../redux/hooks/redux";
 import DropDawn from "../DropDawn/DropDawn";
@@ -41,6 +41,7 @@ function getActiveValue(str: boolean | undefined) {
 
 function Filter({ column }: { column: Column<any, unknown> }) {
   const columnFilterValue = column.getFilterValue();
+
   const { filterVariant, placeholder } = column.columnDef.meta ?? {};
 
   return filterVariant === "select" ? (
@@ -113,10 +114,8 @@ interface PaginationProps {
 
 function Pagination({ table }: PaginationProps) {
   const [activePageBtn, setActivePageBtn] = useState(1);
-  console.log("activePageBtn ", activePageBtn);
 
   const currentPage = table.getState().pagination.pageIndex;
-  console.log("currentPage ", currentPage);
 
   const pageCount = table.getPageCount();
   const btns: number[] = new Array(pageCount - 1).fill(0).map((_, i) => i + 1);
@@ -211,8 +210,8 @@ function Pagination({ table }: PaginationProps) {
                   >
                     {currentPage <= 3
                       ? 3
-                      : currentPage >= pageCount - 3 // 5/7
-                      ? pageCount - 3 // 5/7
+                      : currentPage >= pageCount - 3
+                      ? pageCount - 3
                       : currentPage}
                   </button>
                 );
@@ -359,10 +358,17 @@ function Pagination({ table }: PaginationProps) {
 
 export default function MenuTable() {
   const { currentFilial } = useAppSelector((state) => state.appReducer);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
   const [pagination, setPagination] = useState({
     pageSize: 10,
     pageIndex: 1,
   });
+  const [name, setName] = useState("");
+  const [filial, setFilial] = useState("");
+  const [tt, setTT] = useState("");
+  const [active, setActive] = useState("");
 
   const {
     data: menuInfo,
@@ -374,6 +380,10 @@ export default function MenuTable() {
       params: {
         limit: String(pagination.pageSize),
         page: String(pagination.pageIndex),
+        name,
+        filial,
+        tt,
+        active,
       },
     },
     { skip: !currentFilial.id }
@@ -388,6 +398,7 @@ export default function MenuTable() {
           filterVariant: "text",
           placeholder: "Название меню",
         },
+        filterFn: "includesString",
       },
       {
         accessorKey: "filial.name",
@@ -396,6 +407,7 @@ export default function MenuTable() {
           filterVariant: "text",
           placeholder: "Филиал",
         },
+        filterFn: "includesString",
         size: 146,
       },
       {
@@ -405,6 +417,7 @@ export default function MenuTable() {
           filterVariant: "text",
           placeholder: "Торговая точка",
         },
+        filterFn: "includesString",
         size: 146,
       },
       {
@@ -432,16 +445,50 @@ export default function MenuTable() {
     filterFns: {},
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
     pageCount: max_pages ? max_pages + 1 : 0,
     onPaginationChange: setPagination,
-    state: { pagination },
+    state: { pagination, columnFilters },
+
+    manualFiltering: true,
+    onColumnFiltersChange: setColumnFilters,
   });
 
   useEffect(() => {
-    console.log("pageIndex ", pagination.pageIndex);
-  }, [pagination]);
+    if (table.getState().columnFilters.length) {
+      table.getState().columnFilters.map((filter) => {
+        const filterVal = filter.value as string;
+        switch (filter.id) {
+          case "name":
+            setName(filterVal);
+            break;
+          case "filial":
+            setFilial(filterVal);
+            break;
+          case "tt":
+            setTT(filterVal);
+            break;
+          case "active":
+            setActive(
+              filter.value === true
+                ? "active"
+                : filter.value === false
+                ? "no_active"
+                : ""
+            );
+            break;
+          default:
+            break;
+        }
+        setPagination((prev) => ({ ...prev, pageIndex: 1 }));
+      });
+    } else {
+      setName("");
+      setFilial("");
+      setTT("");
+      setActive("");
+    }
+  }, [table.getState().columnFilters]);
 
   if (error) {
     if ("status" in error) {
