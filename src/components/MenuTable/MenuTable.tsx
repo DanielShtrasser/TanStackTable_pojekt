@@ -454,6 +454,8 @@ export default function MenuTable() {
     onColumnFiltersChange: setColumnFilters,
   });
 
+  const pageCount = table.getPageCount();
+
   useEffect(() => {
     if (table.getState().columnFilters.length) {
       table.getState().columnFilters.map((filter) => {
@@ -480,7 +482,7 @@ export default function MenuTable() {
           default:
             break;
         }
-        setPagination((prev) => ({ ...prev, pageIndex: 1 }));
+        if (pageCount < 3) setPagination((prev) => ({ ...prev, pageIndex: 1 }));
       });
     } else {
       setName("");
